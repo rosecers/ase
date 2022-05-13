@@ -25,6 +25,17 @@ def test_matplotlib_plot(plt):
     assert len(ax.patches) == len(slab)
 
 
+def test_matplotlib_edgecolors(plt):
+    slab = FaceCenteredCubic('Au', size=(2, 2, 2))
+
+    fig, ax = plt.subplots()
+    edgecolors=np.random.uniform(0, 1, (len(slab), 4))
+    plot_atoms(slab, ax, radii=0.5,
+               show_unit_cell=0, edgecolors=edgecolors)
+
+    for p, ec in zip(ax.patches, edgecolors[np.argsort(slab.positions[:, 2])]):
+        assert np.allclose(p._edgecolor, ec, atol=1E-4)
+
 class TestPlotManager:
     @pytest.fixture
     def xy_data(self):

@@ -2,13 +2,31 @@ from ase.io.utils import PlottingVariables, make_patch_list
 
 
 class Matplotlib(PlottingVariables):
-    def __init__(self, atoms, ax,
-                 rotation='', radii=None,
-                 colors=None, scale=1, offset=(0, 0), **parameters):
+    def __init__(
+        self,
+        atoms,
+        ax,
+        rotation="",
+        radii=None,
+        colors=None,
+        edgecolors="black",
+        linewidths=1,
+        scale=1,
+        offset=(0, 0),
+        **parameters
+    ):
         PlottingVariables.__init__(
-            self, atoms, rotation=rotation,
-            radii=radii, colors=colors, scale=scale,
-            extra_offset=offset, **parameters)
+            self,
+            atoms,
+            rotation=rotation,
+            radii=radii,
+            colors=colors,
+            edgecolors=edgecolors,
+            linewidths=linewidths,
+            scale=scale,
+            extra_offset=offset,
+            **parameters
+        )
 
         self.ax = ax
         self.figure = ax.figure
@@ -82,6 +100,10 @@ def plot_atoms(atoms, ax=None, **parameters):
     colors : list of strings, optional
         Color of the atoms, must be the same length as
         the number of atoms in the atoms object.
+    edgecolors : string or list of strings, optional
+        linecolor of the atoms
+    linewidths : float or list of float, optional
+        linewidths for any bonds
     scale : float, optional
         Scaling of the plotted atoms and lines.
     offset : tuple (float, float), optional
@@ -92,6 +114,7 @@ def plot_atoms(atoms, ax=None, **parameters):
         atoms = atoms[0]
 
     import matplotlib.pyplot as plt
+
     if ax is None:
         ax = plt.gca()
     Matplotlib(atoms, ax, **parameters).write()

@@ -10,11 +10,29 @@ from ase.data.colors import jmol_colors
 
 class PlottingVariables:
     # removed writer - self
-    def __init__(self, atoms, rotation='', show_unit_cell=2,
-                 radii=None, bbox=None, colors=None, scale=20,
-                 maxwidth=500, extra_offset=(0., 0.)):
+    def __init__(
+        self,
+        atoms,
+        rotation="",
+        show_unit_cell=2,
+        radii=None,
+        bbox=None,
+        colors=None,
+        edgecolors="black",
+        linewidths=1,
+        scale=20,
+        maxwidth=500,
+        extra_offset=(0.0, 0.0),
+    ):
         self.numbers = atoms.get_atomic_numbers()
         self.colors = colors
+        self.edgecolors = edgecolors
+        if not isinstance(edgecolors, (list, np.ndarray)):
+            self.edgecolors = [edgecolors for _ in self.numbers]
+        self.linewidths = linewidths
+        if not isinstance(linewidths, (list, np.ndarray)):
+            self.linewidths = [linewidths for _ in self.numbers]
+
         if colors is None:
             ncolors = len(jmol_colors)
             self.colors = jmol_colors[self.numbers.clip(max=ncolors - 1)]
@@ -182,8 +200,13 @@ def make_patch_list(writer):
                                        key=lambda x: x[1],
                                        reverse=True):
                     if np.round(occ, decimals=4) == 1.0:
-                        patch = Circle(xy, r, facecolor=writer.colors[a],
-                                       edgecolor='black')
+                        patch = Circle(
+                            xy,
+                            r,
+                            facecolor=writer.colors[a],
+                            edgecolor=writer.edgecolors[a],
+                            linewidth=writer.linewidths[a],
+                        )
                         patch_list.append(patch)
                     else:
                         # jmol colors for the moment
@@ -196,10 +219,19 @@ def make_patch_list(writer):
                         start += extent
 
             else:
-                if ((xy[1] + r > 0) and (xy[1] - r < writer.h) and
-                    (xy[0] + r > 0) and (xy[0] - r < writer.w)):
-                    patch = Circle(xy, r, facecolor=writer.colors[a],
-                                   edgecolor='black')
+                if (
+                    (xy[1] + r > 0)
+                    and (xy[1] - r < writer.h)
+                    and (xy[0] + r > 0)
+                    and (xy[0] - r < writer.w)
+                ):
+                    patch = Circle(
+                        xy,
+                        r,
+                        facecolor=writer.colors[a],
+                        edgecolor=writer.edgecolors[a],
+                        linewidth=writer.linewidths[a],
+                    )
                     patch_list.append(patch)
         else:
             a -= writer.natoms
